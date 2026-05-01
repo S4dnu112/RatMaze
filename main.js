@@ -152,7 +152,7 @@ let astarPath = [];
 let astarCost = null;
 let astarVisited = [];
 
-let isRatView = false;
+let isRatView = true;
 let jerryFacing = "right";
 
 // ─── Canvas & Images ─────────────────────────────────────────────────────────
@@ -174,7 +174,6 @@ const btnRight = document.getElementById("btnRight");
 const btnDown = document.getElementById("btnDown");
 const btnRunAstar = document.getElementById("btnRunAstar");
 const btnReset = document.getElementById("btnReset");
-const statusLabel = document.getElementById("statusLabel");
 const currentNodeDisplay = document.getElementById("currentNodeDisplay");
 const gScoreDisplay = document.getElementById("gScoreDisplay");
 const hScoreDisplay = document.getElementById("hScoreDisplay");
@@ -190,8 +189,8 @@ viewToggle.addEventListener("change", (e) => {
 
 heuristicToggle.addEventListener("change", drawGraph);
 
-btnReset.addEventListener("click", reset);
 btnRunAstar.addEventListener("click", runAstar);
+btnReset.addEventListener("click", reset);
 
 btnUp.addEventListener("click", () => move("up"));
 btnLeft.addEventListener("click", () => move("left"));
@@ -228,8 +227,6 @@ function reset() {
     astarCost = null;
     astarVisited = [];
     jerryFacing = "right";
-    statusLabel.innerText = "Ready.";
-    statusLabel.style.color = "";
     drawGraph();
 }
 
@@ -269,8 +266,6 @@ function move(direction) {
     const nextChoice = findNeighborInDirection(direction);
 
     if (!nextChoice) {
-        statusLabel.innerText = `No connected node ${direction}.`;
-        statusLabel.style.color = "#fca5a5";
         updateMovementButtons();
         return;
     }
@@ -280,14 +275,6 @@ function move(direction) {
     currentNode = neighbor;
     path.push(currentNode);
     gScore += weight;
-
-    if (currentNode === GOAL_NODE) {
-        statusLabel.innerText = "Goal reached! 🧀";
-        statusLabel.style.color = "#a7f3d0";
-    } else {
-        statusLabel.innerText = `Moved ${direction} · cost +${weight}`;
-        statusLabel.style.color = "#a7f3d0";
-    }
 
     drawGraph();
 }
@@ -373,15 +360,6 @@ function runAstar() {
     astarPath = result.path;
     astarCost = result.cost;
     astarVisited = result.visited;
-
-    if (astarPath.length > 0) {
-        statusLabel.innerText = `A* path found · cost: ${astarCost}`;
-        statusLabel.style.color = "#a7f3d0";
-    } else {
-        statusLabel.innerText = "A* found no path.";
-        statusLabel.style.color = "#fca5a5";
-    }
-
     drawGraph();
 }
 
@@ -547,10 +525,41 @@ function drawGraph() {
 // ─── Info Panel ───────────────────────────────────────────────────────────────
 function updateInfo() {
     const h = nodes[currentNode].h;
+    const gExpression = buildGScoreExpression();
+    const gTotal = gExpression.total;
     currentNodeDisplay.innerText = currentNode;
-    gScoreDisplay.innerText = gScore;
+    gScoreDisplay.innerText = gExpression.text;
     hScoreDisplay.innerText = h;
-    fScoreDisplay.innerText = gScore + h;
+    fScoreDisplay.innerText = gTotal + h;
+}
+
+function buildGScoreExpression() {
+    if (path.length < 2) {
+        return { text: "0", total: 0 };
+    }
+
+    const weights = [];
+    for (let i = 0; i < path.length - 1; i++) {
+        const from = path[i];
+        const to = path[i + 1];
+        const edgeWeight = getEdgeWeight(from, to);
+        if (edgeWeight !== null) weights.push(edgeWeight);
+    }
+
+    const total = weights.reduce((sum, value) => sum + value, 0);
+    if (weights.length === 0) {
+        return { text: "0", total: 0 };
+    }
+
+    return { text: `${weights.join(" + ")} = ${total}`, total };
+}
+
+function getEdgeWeight(from, to) {
+    const neighbors = graph[from] || [];
+    for (const { neighbor, weight } of neighbors) {
+        if (neighbor === to) return weight;
+    }
+    return null;
 }
 
 // ─── Initial Draw ─────────────────────────────────────────────────────────────

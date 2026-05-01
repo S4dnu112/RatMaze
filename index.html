@@ -15,37 +15,34 @@
                 <!-- Layers for different views -->
                 <canvas id="mazeCanvas" width="1000" height="940"></canvas>
             </div>
-            
-            <div class="mode-toggle">
-                <div class="toggle-group">
-                    <span class="mode-label">Nodes View</span>
-                    <label class="switch">
-                        <input type="checkbox" id="viewToggle">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="mode-label">Rat View</span>
-                </div>
-                <div class="toggle-group">
-                    <span class="mode-label">Heuristic</span>
-                    <label class="switch">
-                        <input type="checkbox" id="heuristicToggle" checked>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
         </main>
 
         <!-- Sidebar Panel -->
         <aside class="sidebar">
             <div class="glass-panel">
-                <h1 class="app-title">A* Rat Maze</h1>                
-                <div class="controls-group">
-                    <h3>Controls</h3>
-                    <div class="d-pad">
-                        <button id="btnUp" class="d-pad-btn up">▲</button>
-                        <button id="btnLeft" class="d-pad-btn left">◀</button>
-                        <button id="btnRight" class="d-pad-btn right">▶</button>
-                        <button id="btnDown" class="d-pad-btn down">▼</button>
+                <h1 class="app-title">A* Rat Maze</h1>
+                <div class="mode-toggle">
+                    <div class="toggle-group">
+                        <span class="mode-label">Jerry View</span>
+                        <label class="switch">
+                            <input type="checkbox" id="viewToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <span class="mode-label">Heuristic</span>
+                        <label class="switch">
+                            <input type="checkbox" id="heuristicToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div id="metricsPanel" class="metrics-panel">
+                        <p><strong>Current node:</strong> <span id="currentNodeDisplay">-</span></p>
+                        <div class="metric-row"><span class="metric-label">g(n):</span> <span id="gScoreDisplay">0</span></div>
+                        <div class="metric-row"><span class="metric-label">h(n):</span> <span id="hScoreDisplay">0</span></div>
+                        <div class="metric-row"><span class="metric-label">f(n):</span> <span id="fScoreDisplay">0</span></div>
                     </div>
                 </div>
 
@@ -54,16 +51,12 @@
                     <button id="btnReset" class="secondary-btn">Reset</button>
                 </div>
 
-                <div class="info-group">
-                    <h3>Status</h3>
-                    <div id="statusLabel" class="status-box">Ready.</div>
-                    
-                    <h3>Metrics</h3>
-                    <div id="metricsPanel" class="metrics-panel">
-                        <p><strong>Current node:</strong> <span id="currentNodeDisplay">-</span></p>
-                        <div class="metric-row"><span class="metric-label">g(n):</span> <span id="gScoreDisplay">0</span></div>
-                        <div class="metric-row"><span class="metric-label">h(n):</span> <span id="hScoreDisplay">0</span></div>
-                        <div class="metric-row"><span class="metric-label">f(n):</span> <span id="fScoreDisplay">0</span></div>
+                <div class="controls-group">
+                    <div class="d-pad">
+                        <button id="btnUp" class="d-pad-btn up">▲</button>
+                        <button id="btnLeft" class="d-pad-btn left">◀</button>
+                        <button id="btnRight" class="d-pad-btn right">▶</button>
+                        <button id="btnDown" class="d-pad-btn down">▼</button>
                     </div>
                 </div>
             </div>
