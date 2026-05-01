@@ -153,15 +153,18 @@ let astarCost = null;
 let astarVisited = [];
 
 let isRatView = false;
+let jerryFacing = "right";
 
 // ─── Canvas & Images ─────────────────────────────────────────────────────────
 const canvas = document.getElementById("mazeCanvas");
 const ctx = canvas.getContext("2d");
 
 const imgMazeOutline = document.getElementById("imgMazeOutline");
-const imgJerry = document.getElementById("imgJerry");
+const imgJerryRight = document.getElementById("imgJerryRight");
+const imgJerryLeft = document.getElementById("imgJerryLeft");
 const imgTom = document.getElementById("imgTom");
 const imgPath = document.getElementById("imgPath");
+const imgEnd = document.getElementById("imgEnd");
 
 // ─── UI Elements (must be declared before any drawGraph call) ─────────────────
 const btnUp = document.getElementById("btnUp");
@@ -202,12 +205,14 @@ document.addEventListener("keydown", (e) => {
 let imagesLoaded = 0;
 function checkImagesLoaded() {
     imagesLoaded++;
-    if (imagesLoaded === 4) drawGraph();
+    if (imagesLoaded === 6) drawGraph();
 }
 if (imgMazeOutline.complete) checkImagesLoaded(); else imgMazeOutline.onload = checkImagesLoaded;
-if (imgJerry.complete) checkImagesLoaded(); else imgJerry.onload = checkImagesLoaded;
+if (imgJerryRight.complete) checkImagesLoaded(); else imgJerryRight.onload = checkImagesLoaded;
+if (imgJerryLeft.complete) checkImagesLoaded(); else imgJerryLeft.onload = checkImagesLoaded;
 if (imgTom.complete) checkImagesLoaded(); else imgTom.onload = checkImagesLoaded;
 if (imgPath.complete) checkImagesLoaded(); else imgPath.onload = checkImagesLoaded;
+if (imgEnd.complete) checkImagesLoaded(); else imgEnd.onload = checkImagesLoaded;
 
 // ─── Reset ────────────────────────────────────────────────────────────────────
 function reset() {
@@ -217,6 +222,7 @@ function reset() {
     astarPath = [];
     astarCost = null;
     astarVisited = [];
+    jerryFacing = "right";
     statusLabel.innerText = "Ready.";
     statusLabel.style.color = "";
     drawGraph();
@@ -265,6 +271,7 @@ function move(direction) {
     }
 
     const { neighbor, weight } = nextChoice;
+    updateJerryFacing(currentNode, neighbor);
     currentNode = neighbor;
     path.push(currentNode);
     gScore += weight;
@@ -278,6 +285,15 @@ function move(direction) {
     }
 
     drawGraph();
+}
+
+function updateJerryFacing(fromNode, toNode) {
+    const [fx, fy] = nodes[fromNode].pos;
+    const [tx, ty] = nodes[toNode].pos;
+    const dx = tx - fx;
+
+    if (dx > 0) jerryFacing = "right";
+    else if (dx < 0) jerryFacing = "left";
 }
 
 function updateMovementButtons() {
@@ -430,13 +446,20 @@ function drawGraph() {
             }
         }
 
-        // Jerry sprite at current node
-        const [rx, ry] = nodes[currentNode].pos;
-        ctx.drawImage(imgJerry, rx - 40, ry - 30, 80, 60);
-
-        // Tom sprite at goal node
         const [gx, gy] = nodes[GOAL_NODE].pos;
-        ctx.drawImage(imgTom, gx - 45, gy - 45, 90, 90);
+        const [rx, ry] = nodes[currentNode].pos;
+
+        if (currentNode === GOAL_NODE) {
+            // Show end state image when Jerry meets Tom at the goal node.
+            ctx.drawImage(imgEnd, gx - 50, gy - 50, 100, 100);
+        } else {
+            // Jerry sprite at current node
+            const jerrySprite = jerryFacing === "left" ? imgJerryLeft : imgJerryRight;
+            ctx.drawImage(jerrySprite, rx - 40, ry - 30, 80, 60);
+
+            // Tom sprite at goal node
+            ctx.drawImage(imgTom, gx - 45, gy - 45, 90, 90);
+        }
 
     } else {
         // ── NODES VIEW ──
