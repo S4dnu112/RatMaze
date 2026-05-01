@@ -17,21 +17,28 @@
             </div>
             
             <div class="mode-toggle">
-                <span class="mode-label">Nodes View</span>
-                <label class="switch">
-                    <input type="checkbox" id="viewToggle">
-                    <span class="slider round"></span>
-                </label>
-                <span class="mode-label">Rat View</span>
+                <div class="toggle-group">
+                    <span class="mode-label">Nodes View</span>
+                    <label class="switch">
+                        <input type="checkbox" id="viewToggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="mode-label">Rat View</span>
+                </div>
+                <div class="toggle-group">
+                    <span class="mode-label">Heuristic</span>
+                    <label class="switch">
+                        <input type="checkbox" id="heuristicToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
         </main>
 
         <!-- Sidebar Panel -->
         <aside class="sidebar">
             <div class="glass-panel">
-                <h1 class="app-title">A* Rat Maze</h1>
-                <p class="app-subtitle">Algorithm Visualizer</p>
-                
+                <h1 class="app-title">A* Rat Maze</h1>                
                 <div class="controls-group">
                     <h3>Controls</h3>
                     <div class="d-pad">
@@ -69,6 +76,7 @@
         <img id="imgJerryRight" src="assets/jerry_rat_right.png">
         <img id="imgJerryLeft" src="assets/jerry_rat_left.png">
         <img id="imgTom" src="assets/tom_goal.png">
+        <img id="imgHeuristic" src="assets/heuristic_path.png">
         <img id="imgPath" src="assets/path.jpg">
         <img id="imgEnd" src="assets/end.png">
     </div>

@@ -74,12 +74,18 @@ canvas {
 .mode-toggle {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
     background: var(--panel-bg);
     padding: 0.75rem 1.5rem;
     border-radius: 999px;
     backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .mode-label {

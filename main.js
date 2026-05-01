@@ -163,6 +163,7 @@ const imgMazeOutline = document.getElementById("imgMazeOutline");
 const imgJerryRight = document.getElementById("imgJerryRight");
 const imgJerryLeft = document.getElementById("imgJerryLeft");
 const imgTom = document.getElementById("imgTom");
+const imgHeuristic = document.getElementById("imgHeuristic");
 const imgPath = document.getElementById("imgPath");
 const imgEnd = document.getElementById("imgEnd");
 
@@ -179,12 +180,15 @@ const gScoreDisplay = document.getElementById("gScoreDisplay");
 const hScoreDisplay = document.getElementById("hScoreDisplay");
 const fScoreDisplay = document.getElementById("fScoreDisplay");
 const viewToggle = document.getElementById("viewToggle");
+const heuristicToggle = document.getElementById("heuristicToggle");
 
 // ─── Event Listeners ──────────────────────────────────────────────────────────
 viewToggle.addEventListener("change", (e) => {
     isRatView = e.target.checked;
     drawGraph();
 });
+
+heuristicToggle.addEventListener("change", drawGraph);
 
 btnReset.addEventListener("click", reset);
 btnRunAstar.addEventListener("click", runAstar);
@@ -205,12 +209,13 @@ document.addEventListener("keydown", (e) => {
 let imagesLoaded = 0;
 function checkImagesLoaded() {
     imagesLoaded++;
-    if (imagesLoaded === 6) drawGraph();
+    if (imagesLoaded === 7) drawGraph();
 }
 if (imgMazeOutline.complete) checkImagesLoaded(); else imgMazeOutline.onload = checkImagesLoaded;
 if (imgJerryRight.complete) checkImagesLoaded(); else imgJerryRight.onload = checkImagesLoaded;
 if (imgJerryLeft.complete) checkImagesLoaded(); else imgJerryLeft.onload = checkImagesLoaded;
 if (imgTom.complete) checkImagesLoaded(); else imgTom.onload = checkImagesLoaded;
+if (imgHeuristic.complete) checkImagesLoaded(); else imgHeuristic.onload = checkImagesLoaded;
 if (imgPath.complete) checkImagesLoaded(); else imgPath.onload = checkImagesLoaded;
 if (imgEnd.complete) checkImagesLoaded(); else imgEnd.onload = checkImagesLoaded;
 
@@ -435,6 +440,16 @@ function drawGraph() {
     if (isRatView) {
         // Draw maze background
         ctx.drawImage(imgMazeOutline, 50, -25, 900, 850);
+
+        // Heuristic overlay on top of the maze background
+        if (heuristicToggle.checked) {
+            const scale = 0.85;
+            const overlayW = 900 * scale;
+            const overlayH = 850 * scale;
+            const overlayX = 70 + (900 - overlayW) / 2;
+            const overlayY = -25 + (850 - overlayH) / 2;
+            ctx.drawImage(imgHeuristic, overlayX, overlayY, overlayW, overlayH);
+        }
 
         // Overlay A* path and manual path as corridor highlights
         for (const [a, b, weight, via] of edges) {
