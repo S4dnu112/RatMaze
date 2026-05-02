@@ -534,14 +534,15 @@ function updateInfo() {
 }
 
 function buildGScoreExpression() {
-    if (path.length < 2) {
+    const currentPath = buildCurrentPath();
+    if (currentPath.length < 2) {
         return { text: "0", total: 0 };
     }
 
     const weights = [];
-    for (let i = 0; i < path.length - 1; i++) {
-        const from = path[i];
-        const to = path[i + 1];
+    for (let i = 0; i < currentPath.length - 1; i++) {
+        const from = currentPath[i];
+        const to = currentPath[i + 1];
         const edgeWeight = getEdgeWeight(from, to);
         if (edgeWeight !== null) weights.push(edgeWeight);
     }
@@ -552,6 +553,26 @@ function buildGScoreExpression() {
     }
 
     return { text: `${weights.join(" + ")} = ${total}`, total };
+}
+
+function buildCurrentPath() {
+    const stack = [];
+    const indexByNode = new Map();
+
+    for (const nodeId of path) {
+        if (indexByNode.has(nodeId)) {
+            const idx = indexByNode.get(nodeId);
+            for (let i = stack.length - 1; i > idx; i--) {
+                indexByNode.delete(stack[i]);
+                stack.pop();
+            }
+        } else {
+            indexByNode.set(nodeId, stack.length);
+            stack.push(nodeId);
+        }
+    }
+
+    return stack;
 }
 
 function getEdgeWeight(from, to) {
