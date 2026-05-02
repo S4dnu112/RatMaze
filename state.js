@@ -11,6 +11,8 @@ let gScore = 0;
 let astarPath = [];
 let astarCost = null;
 let astarVisited = [];
+let astarAnimationTimer = null;
+let isAstarAnimating = false;
 
 let isRatView = true;
 let jerryFacing = "right";

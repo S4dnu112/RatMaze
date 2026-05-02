@@ -14,6 +14,7 @@ if (imgEnd.complete) checkImagesLoaded(); else imgEnd.onload = checkImagesLoaded
 
 // ─── Reset ────────────────────────────────────────────────────────────────────
 function reset() {
+    stopAstarAnimation();
     currentNode = START_NODE;
     path = [START_NODE];
     gScore = 0;
