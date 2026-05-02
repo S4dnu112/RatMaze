@@ -65,7 +65,7 @@ function createAstarSession(start, goal) {
     const openSet = new PriorityQueue();
     openSet.enqueue(start, nodes[start].h);
 
-    const gScores = {};
+    const gScores = {}; // g(n): best-known cost from start to node.
     for (const nodeId in nodes) gScores[nodeId] = Infinity;
     gScores[start] = 0;
 
@@ -88,7 +88,7 @@ function stepAstarSession(session) {
 
         if (session.closedSet.has(current)) continue;
 
-        session.closedSet.add(current);
+        session.closedSet.add(current); // Closed set: nodes already expanded.
         session.visitedOrder.push(current);
         session.stepCount += 1;
 
@@ -96,6 +96,7 @@ function stepAstarSession(session) {
         let bestNeighbor = null;
         let bestScore = Infinity;
 
+        // GOAL
         if (current === session.goal) {
             const pathResult = reconstructPath(session.cameFrom, current);
             return {
@@ -113,6 +114,7 @@ function stepAstarSession(session) {
         const pathToCurrent = reconstructPath(session.cameFrom, current);
         const forwardSet = new Set(pathToCurrent); // Avoid backtracking in comparison list.
 
+        // Evaluate each neighbor: f(n) = g(n) + h(n).
         for (const { neighbor, weight } of graph[current]) {
             const tentativeG = session.gScores[current] + weight;
             const hScore = nodes[neighbor].h;
@@ -127,7 +129,7 @@ function stepAstarSession(session) {
                         bestNeighbor = neighbor;
                     }
                 }
-                session.cameFrom[neighbor] = current;
+                session.cameFrom[neighbor] = current; // Parent pointer for path rebuild.
                 session.gScores[neighbor] = tentativeG;
                 session.openSet.enqueue(neighbor, tentativeG + nodes[neighbor].h);
             }
