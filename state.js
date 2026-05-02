@@ -12,7 +12,9 @@ let astarPath = [];
 let astarCost = null;
 let astarVisited = [];
 let astarAnimationTimer = null;
-let isAstarAnimating = false;
+let astarSession = null;
+let astarStatus = "idle";
+let astarAnimationSpeed = 450;
 
 let isRatView = true;
 let jerryFacing = "right";
@@ -42,3 +44,5 @@ const hScoreDisplay = document.getElementById("hScoreDisplay");
 const fScoreDisplay = document.getElementById("fScoreDisplay");
 const viewToggle = document.getElementById("viewToggle");
 const heuristicToggle = document.getElementById("heuristicToggle");
+const speedSlider = document.getElementById("speedSlider");
+const speedDisplay = document.getElementById("speedDisplay");

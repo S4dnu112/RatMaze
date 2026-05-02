@@ -33,6 +33,12 @@ viewToggle.addEventListener("change", (e) => {
 
 heuristicToggle.addEventListener("change", drawGraph);
 
+speedSlider.addEventListener("input", (e) => {
+    const newSpeed = parseInt(e.target.value);
+    astarAnimationSpeed = newSpeed;
+    speedDisplay.innerText = newSpeed + "ms";
+});
+
 btnRunAstar.addEventListener("click", runAstar);
 btnReset.addEventListener("click", reset);
 

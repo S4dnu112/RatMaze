@@ -11,14 +11,48 @@ class PriorityQueue {
 
 const ASTAR_STEP_DELAY = 450;
 
-function stopAstarAnimation() {
+function clearAstarTimer() {
     if (astarAnimationTimer !== null) {
         clearTimeout(astarAnimationTimer);
         astarAnimationTimer = null;
     }
-    isAstarAnimating = false;
+}
+
+function syncAstarButton() {
     btnRunAstar.disabled = false;
-    btnRunAstar.textContent = "Run A* Search";
+
+    if (astarStatus === "running") {
+        btnRunAstar.textContent = "Pause A* Search";
+    } else if (astarStatus === "paused") {
+        btnRunAstar.textContent = "Resume A* Search";
+    } else {
+        btnRunAstar.textContent = "Run A* Search";
+    }
+}
+
+function stopAstarAnimation() {
+    clearAstarTimer();
+    astarSession = null;
+    astarStatus = "idle";
+    syncAstarButton();
+}
+
+function pauseAstarAnimation() {
+    if (astarStatus !== "running") return;
+
+    clearAstarTimer();
+    astarStatus = "paused";
+    syncAstarButton();
+    drawGraph();
+}
+
+function resumeAstarAnimation() {
+    if (astarStatus !== "paused" || !astarSession) return;
+
+    astarStatus = "running";
+    syncAstarButton();
+    drawGraph();
+    stepThroughSearch();
 }
 
 function createAstarSession(start, goal) {
@@ -121,64 +155,79 @@ function reconstructPath(cameFrom, current) {
     return p.reverse();
 }
 
+function finalizeAstarRun(stepResult, reachedGoal) {
+    clearAstarTimer();
+
+    if (reachedGoal) {
+        astarPath = stepResult.path;
+        astarCost = stepResult.cost;
+        path = stepResult.path.slice();
+        currentNode = GOAL_NODE;
+        gScore = stepResult.cost ?? 0;
+        jerryFacing = "right";
+    }
+
+    astarVisited = stepResult.visited;
+    astarSession = null;
+    astarStatus = "idle";
+    syncAstarButton();
+    drawGraph();
+}
+
+function stepThroughSearch() {
+    if (astarStatus !== "running" || !astarSession) return;
+
+    const stepResult = stepAstarSession(astarSession);
+    astarVisited = stepResult.visited;
+
+    if (stepResult.current !== null) {
+        path = stepResult.path;
+        currentNode = stepResult.current;
+        gScore = stepResult.cost ?? 0;
+        if (path.length > 1) {
+            const previousNode = path[path.length - 2];
+            jerryFacing = nodes[previousNode].pos[0] <= nodes[currentNode].pos[0] ? "right" : "left";
+        } else {
+            jerryFacing = "right";
+        }
+        drawGraph();
+    }
+
+    if (stepResult.status === "goal") {
+        finalizeAstarRun(stepResult, true);
+        return;
+    }
+
+    if (stepResult.status === "exhausted") {
+        finalizeAstarRun(stepResult, false);
+        return;
+    }
+
+    astarAnimationTimer = setTimeout(stepThroughSearch, astarAnimationSpeed);
+}
+
 function runAstar() {
+    if (astarStatus === "running") {
+        pauseAstarAnimation();
+        return;
+    }
+
+    if (astarStatus === "paused") {
+        resumeAstarAnimation();
+        return;
+    }
+
     stopAstarAnimation();
 
-    const session = createAstarSession(START_NODE, GOAL_NODE);
-
+    astarSession = createAstarSession(START_NODE, GOAL_NODE);
     astarPath = [];
     astarCost = null;
     astarVisited = [];
     currentNode = START_NODE;
     path = [START_NODE];
     gScore = 0;
+    astarStatus = "running";
+    syncAstarButton();
     drawGraph();
-
-    isAstarAnimating = true;
-    btnRunAstar.disabled = true;
-    btnRunAstar.textContent = "Running...";
-
-    const stepThroughSearch = () => {
-        if (!isAstarAnimating) return;
-
-        const stepResult = stepAstarSession(session);
-        astarVisited = stepResult.visited;
-
-        if (stepResult.current !== null) {
-            path = stepResult.path;
-            currentNode = stepResult.current;
-            gScore = stepResult.cost ?? 0;
-            if (path.length > 1) {
-                const previousNode = path[path.length - 2];
-                jerryFacing = nodes[previousNode].pos[0] <= nodes[currentNode].pos[0] ? "right" : "left";
-            } else {
-                jerryFacing = "right";
-            }
-            drawGraph();
-        }
-
-        if (stepResult.status === "goal") {
-            astarPath = stepResult.path;
-            astarCost = stepResult.cost;
-            astarVisited = stepResult.visited;
-            path = stepResult.path.slice();
-            currentNode = GOAL_NODE;
-            gScore = stepResult.cost ?? 0;
-            jerryFacing = "right";
-            stopAstarAnimation();
-            drawGraph();
-            return;
-        }
-
-        if (stepResult.status === "exhausted") {
-            astarVisited = stepResult.visited;
-            stopAstarAnimation();
-            drawGraph();
-            return;
-        }
-
-        astarAnimationTimer = setTimeout(stepThroughSearch, ASTAR_STEP_DELAY);
-    };
-
     stepThroughSearch();
 }
