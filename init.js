@@ -21,6 +21,8 @@ function reset() {
     astarPath = [];
     astarCost = null;
     astarVisited = [];
+    astarComparisonHistory = [];
+    astarBestEdge = null;
     jerryFacing = "right";
     drawGraph();
 }

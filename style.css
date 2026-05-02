@@ -163,7 +163,7 @@ input:checked + .slider:before {
 
 /* Sidebar */
 .sidebar {
-    width: 420px;
+    width: 480px;
     display: flex;
     flex-direction: column;
     height: 940px;
@@ -344,6 +344,75 @@ button.primary-btn, button.secondary-btn {
 #currentNodeDisplay {
     color: var(--accent-color);
     font-weight: bold;
+}
+
+.comparison-panel {
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.comparison-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.5rem;
+}
+
+.comparison-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+}
+
+.comparison-block {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 10px;
+    padding: 0.6rem 0.7rem;
+}
+
+.comparison-step {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.comparison-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: #1f2937;
+    padding: 0.2rem 0;
+}
+
+.comparison-line.best {
+    color: #166534;
+    font-weight: 700;
+}
+
+.comparison-node {
+    font-weight: 700;
+    color: #1d4ed8;
+    min-width: 110px;
+}
+
+.comparison-eq {
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+}
+
+.comparison-empty {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
 }
 
 /* Speed Control */

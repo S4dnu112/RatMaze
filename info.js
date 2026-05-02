@@ -7,6 +7,31 @@ function updateInfo() {
     gScoreDisplay.innerText = gExpression.text;
     hScoreDisplay.innerText = h;
     fScoreDisplay.innerText = gTotal + h;
+    renderComparisonHistory();
+}
+
+function renderComparisonHistory() {
+    if (!comparisonList) return;
+
+    if (!astarComparisonHistory || astarComparisonHistory.length === 0) {
+        comparisonList.innerHTML = "<div class=\"comparison-empty\">No comparisons yet.</div>";
+        return;
+    }
+
+    const recent = astarComparisonHistory.slice(-6);
+    const html = recent.map((entry) => {
+        const header = `<div class=\"comparison-step\">Step ${entry.step} - ${entry.current}</div>`;
+        const lines = entry.candidates.map((candidate) => {
+            const isBest = candidate.neighbor === entry.bestNeighbor;
+            const rowClass = isBest ? "comparison-line best" : "comparison-line";
+            const gText = candidate.gText || candidate.g.toString();
+            const equation = `f(n) = ${gText} + ${candidate.h} = ${candidate.f}`;
+            return `<div class=\"${rowClass}\"><span class=\"comparison-node\">${candidate.neighbor}</span><span class=\"comparison-eq\">${equation}</span></div>`;
+        }).join("");
+        return `<div class=\"comparison-block\">${header}${lines}</div>`;
+    }).join("");
+
+    comparisonList.innerHTML = html;
 }
 
 function buildGScoreExpression() {

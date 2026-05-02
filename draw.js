@@ -7,6 +7,12 @@ function edgeIsInPath(pathArr, a, b) {
     return false;
 }
 
+function edgeIsBestComparison(a, b) {
+    if (!astarBestEdge) return false;
+    return (astarBestEdge.from === a && astarBestEdge.to === b)
+        || (astarBestEdge.from === b && astarBestEdge.to === a);
+}
+
 // ─── Drawing Helpers ─────────────────────────────────────────────────────────-
 function drawPolyline(points, color, width, glow = false) {
     if (points.length < 2) return;
@@ -67,7 +73,9 @@ function drawGraph() {
         // Overlay A* path and manual path as corridor highlights
         for (const [a, b, weight, via] of edges) {
             const pts = edgePoints(a, b, via);
-            if (edgeIsInPath(astarPath, a, b)) {
+            if (edgeIsBestComparison(a, b)) {
+                drawPolyline(pts, "rgba(34,197,94,0.85)", 16, true);
+            } else if (edgeIsInPath(astarPath, a, b)) {
                 drawPolyline(pts, "rgba(255,235,59,0.75)", 15, true);
             } else if (edgeIsInPath(path, a, b)) {
                 drawPolyline(pts, "rgba(255,152,0,0.75)", 10, true);
@@ -102,10 +110,12 @@ function drawGraph() {
             const pts = edgePoints(a, b, via);
             const inAstar = edgeIsInPath(astarPath, a, b);
             const inManual = edgeIsInPath(path, a, b);
+            const inBest = edgeIsBestComparison(a, b);
 
             let color = "#475569", w = 2, glow = false;
             if (inManual) { color = "#f59e0b"; w = 4; }
             if (inAstar) { color = "#06b6d4"; w = 5; glow = true; }
+            if (inBest) { color = "#22c55e"; w = 6; glow = true; }
 
             drawPolyline(pts, color, w, glow);
 
